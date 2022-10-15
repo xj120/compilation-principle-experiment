@@ -12,8 +12,8 @@ public class Main {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
     public static void main(String[] args) {
-        // String[] regexes = new String[]{"c(a|b|c)*"};
-        String[] regexes = new String[]{"c*(a|b)"};
+        //String[] regexes = new String[]{"*ca"};
+        String[] regexes = new String[]{"c*(a|b)", "c(a|b|c)*"};
         RegexSet aRegexes = new RegexSet(regexes);
         for (Regex r : aRegexes.getRegexes()) {
             r.compile();
