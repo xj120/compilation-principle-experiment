@@ -1,4 +1,4 @@
 package BasicClass.FA;
 
-public class DFA {
+public class DFA extends FA{
 }
