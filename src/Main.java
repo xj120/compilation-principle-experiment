@@ -20,7 +20,8 @@ public class Main {
         }
         ArrayList<NFA> nfa_list = new ArrayList<>();
         for (Regex r : aRegexes.getRegexes()) {
-            nfa_list.add(ThompsonConstructor.translate(r.getTree().getRoot()));
+            r.setNfa(ThompsonConstructor.translate(r.getTree().getRoot()));
+            nfa_list.add(r.getNfa());
         }
         NFA final_nfa = CombineNFA.CombineNFAIntoOne(nfa_list);
         final_nfa.showNFA();
