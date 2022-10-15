@@ -3,8 +3,8 @@ package BasicClass.FA;
 import org.jgrapht.graph.DirectedPseudograph;
 
 public class FA {
-    protected State start;
-    protected DirectedPseudograph<State, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class);
+    public State start;
+    public DirectedPseudograph<State, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class);
 
     public FA() {
         this.start = new State(StateType.start);
