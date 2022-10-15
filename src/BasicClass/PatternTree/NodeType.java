@@ -1,0 +1,6 @@
+package BasicClass.PatternTree;
+
+public enum NodeType{
+    BASIC, CONCATENATION, UNION, KLNEENE_CLOSURE, LEFT_PARENTHESIS, RIGHT_PARENTHESIS
+}
+
