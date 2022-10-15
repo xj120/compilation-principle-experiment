@@ -1,22 +1,20 @@
-import BasicClass.FA.NFA;
-import BasicClass.PatternTree.PatternTree;
+import BasicClass.PatternTree.NodeType;
+import BasicClass.Regex.Regex;
 import BasicClass.Regex.RegexSet;
-import Tools.CombineNFA;
-import Tools.ThompsonConstructor;
+import Tools.RegexParser;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 
 public class Main {
-    public static void main(String[] args) {  //TODO
-        String[] regexes = {};
-        RegexSet regexSet = new RegexSet(regexes);
-        ArrayList<PatternTree> patternTrees = regexSet.parse();
-        ArrayList<NFA> nfa_list = new ArrayList<>();
-        for(PatternTree p : patternTrees) {
-            NFA n = ThompsonConstructor.translate(p.root);
-            nfa_list.add(n);
+
+    public static final char[] symbols = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+            'a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+
+    public static void main(String[] args) {
+        String[] regexes = new String[]{"c(a|b|c)*"};
+        RegexSet aRegexes = new RegexSet(regexes);
+        for(Regex r : aRegexes.getRegexes()){
+            r.compile();
         }
-        NFA final_nfa = CombineNFA.CombineNFAIntoOne(nfa_list);
-        final_nfa.showNFA();
     }
 }
