@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         String[] regexes = new String[]{"c(a|b|c)*"};
         RegexSet aRegexes = new RegexSet(regexes);
-        for(Regex r : aRegexes.getRegexes()){
+        for (Regex r : aRegexes.getRegexes()) {
             r.compile();
         }
     }
