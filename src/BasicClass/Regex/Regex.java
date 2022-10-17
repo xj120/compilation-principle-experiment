@@ -69,5 +69,6 @@ public class Regex {
                 node = queue.poll();
             }
         }
+        System.out.println("-------------------------------------------");
     }
 }
