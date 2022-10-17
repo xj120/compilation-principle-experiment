@@ -3,6 +3,7 @@ package Tools;
 import BasicClass.FA.NFA;
 import BasicClass.FA.RelationshipEdge;
 import BasicClass.FA.StateType;
+import BasicClass.PatternTree.NodeType;
 import BasicClass.PatternTree.PatternTreeNode;
 
 public class ThompsonConstructor {
@@ -11,13 +12,13 @@ public class ThompsonConstructor {
             System.out.println("语法分析树为空！");
             return null;
         }
-        int type = node.type;  //存放当前结点的类型
+        NodeType type = node.getType();  //存放当前结点的类型
         NFA nfa = new NFA();  //要返回的NFA
 
-        if (type == PatternTreeNodeType.basis) { //结点类型为basis，如 字母
+        if (type == NodeType.BASIC) { //结点类型为basis，如 字母
             nfa.getTransitTable().addEdge(nfa.getStartState(), nfa.getAcceptState(), new RelationshipEdge(node.getValue()));
             return nfa;
-        } else if (type == PatternTreeNodeType.kleene) {  //结点类型为闭包
+        } else if (type == NodeType.KLNEENE_CLOSURE) {  //结点类型为闭包
             NFA temp_nfa = translate(node.getFirstChild()); //用来存放闭包括号内的RE形成的NFA
             temp_nfa.getStartState().setType(StateType.middle);
             temp_nfa.getAcceptState().setType(StateType.middle);
@@ -34,7 +35,7 @@ public class ThompsonConstructor {
             nfa.merge(temp02_nfa);
             temp01_nfa.getAcceptState().setType(StateType.middle);
             temp02_nfa.getStartState().setType(StateType.middle);
-            if (type == PatternTreeNodeType.conca) { //结点类型为连接符
+            if (type == NodeType.CONCATENATION) { //结点类型为连接符
                 nfa.getTransitTable().addEdge(temp01_nfa.getAcceptState(), temp02_nfa.getStartState(), new RelationshipEdge('ε'));
                 nfa.setStartState(temp01_nfa.getStartState());
                 nfa.setAcceptState(temp02_nfa.getAcceptState());
