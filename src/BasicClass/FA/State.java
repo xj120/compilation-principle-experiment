@@ -2,7 +2,7 @@ package BasicClass.FA;
 
 public class State {
     private int id;
-    private StateType type;
+    private StateType type; //状态类型
 
     public static int STATE_ID = 0;
 

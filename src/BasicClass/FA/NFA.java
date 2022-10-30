@@ -18,7 +18,7 @@ public class NFA extends FA {
         this.accept = accept;
     }
 
-    public void showNFA() {
+    public void showNFA() {  //打印NFA
         System.out.println("Start State:" + this.start.getId());
         System.out.println("Accept State:" + this.accept.getId());
         System.out.println("the transitTable is: \r");

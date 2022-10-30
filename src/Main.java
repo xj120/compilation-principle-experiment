@@ -12,18 +12,18 @@ public class Main {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
     public static void main(String[] args) {
-        //String[] regexes = new String[]{"*ca"};
-        String[] regexes = new String[]{"c*(a|b)", "c(a|b|c)*"};
+        //String[] regexes = new String[]{"*ca"};  //错误输入
+        String[] regexes = new String[]{"c*(a|b)", "c(a|b|c)*"}; //正确输入
         RegexSet aRegexes = new RegexSet(regexes);
-        for (Regex r : aRegexes.getRegexes()) {
+        for (Regex r : aRegexes.getRegexes()) {  //将RE转为语法树
             r.compile();
         }
         ArrayList<NFA> nfa_list = new ArrayList<>();
-        for (Regex r : aRegexes.getRegexes()) {
+        for (Regex r : aRegexes.getRegexes()) {  //将语法树转为NFA
             r.setNfa(ThompsonConstructor.translate(r.getTree().getRoot()));
             nfa_list.add(r.getNfa());
         }
-        NFA final_nfa = CombineNFA.CombineNFAIntoOne(nfa_list);
-        final_nfa.showNFA();
+        NFA final_nfa = CombineNFA.CombineNFAIntoOne(nfa_list);  //将多个NFA组合在一起
+        final_nfa.showNFA();   //打印NFA
     }
 }
