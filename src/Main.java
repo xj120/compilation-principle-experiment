@@ -1,7 +1,9 @@
+import BasicClass.FA.DFA;
 import BasicClass.FA.NFA;
 import BasicClass.Regex.Regex;
 import BasicClass.Regex.RegexSet;
 import Tools.CombineNFA;
+import Tools.SubsetConstructor;
 import Tools.ThompsonConstructor;
 
 import java.util.ArrayList;
@@ -25,5 +27,7 @@ public class Main {
         }
         NFA final_nfa = CombineNFA.CombineNFAIntoOne(nfa_list);  //将多个NFA组合在一起
         final_nfa.showNFA();   //打印NFA
+
+        DFA dfa = SubsetConstructor.toDFA(final_nfa);
     }
 }
