@@ -5,10 +5,10 @@ import org.jgrapht.graph.DirectedPseudograph;
 import java.util.ArrayList;
 
 public class DFA {
-    private Dstate start;
-    private Dstate[] accept;
-    private DirectedPseudograph<Dstate, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class);
-    private ArrayList<Dstate> D_states = new ArrayList<>();
+    private Dstate start; //标记开始状态
+    private Dstate[] accept; //标记接收状态
+    private DirectedPseudograph<Dstate, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class); //转换表
+    private ArrayList<Dstate> D_states = new ArrayList<>(); //状态集合
 
     public DFA() {
         this.start = new Dstate(StateType.start);
@@ -72,5 +72,5 @@ public class DFA {
             }
         }
         return false;
-    }
+    } //判断一个DFA状态是否已经在DFA中
 }
