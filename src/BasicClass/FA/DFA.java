@@ -82,25 +82,26 @@ public class DFA {
     } //判断一个DFA状态是否已经在DFA中
 
     public void showDFATable() { //打印转换表
-        System.out.print("NFA states\t\t\t\t\t\tDFA state");
+        System.out.print("NFA states\t\tDFA state");
         ArrayList<Character> input = getInputSymbol();
         for (Character a : input) {
-            System.out.print("\t\t" + a);
+            System.out.print("\t" + a);
         }
         System.out.println("\r");
         Set<Dstate> dsSet = this.transitTable.vertexSet();
         for (Dstate ds : dsSet) {
             ArrayList<State> ns = ds.getNfa_state();
+            StringBuilder temp = new StringBuilder();
             for (State s : ns) {
-                System.out.print(s.getId() + ",");
+                temp.append(s.getId()).append(",");
             }
-            System.out.print("\t\t\t\t\t\t?" + ds.getId());
+            System.out.print(temp + "\t" + ds.getId());
             Set<RelationshipEdge> edgeSet = this.transitTable.edgesOf(ds);
             for (Character character : input) {
                 for (RelationshipEdge e : edgeSet) {
-                    if (this.transitTable.getEdgeTarget(e) != ds) {
+                    if (this.transitTable.getEdgeSource(e) == ds) {
                         if (e.getLabel() == character) {
-                            System.out.print("\t\t" + character + this.transitTable.getEdgeTarget(e).getId());
+                            System.out.print("\t" + this.transitTable.getEdgeTarget(e).getId());
                         }
                     }
                 }
