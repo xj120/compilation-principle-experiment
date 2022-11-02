@@ -38,7 +38,7 @@ public class Dstate extends State {
         this.nfa_state = nfa_state;
     }
 
-    public boolean equals(Dstate d) {
+    public boolean equals(Dstate d) { //判断两个DFA状态是否相同
         if (nfa_state.size() != d.getNfa_state().size()) {
             return false;
         } else {
@@ -53,7 +53,7 @@ public class Dstate extends State {
             }
             return count == nfa_state.size();
         }
-    } //判断两个DFA状态是否相同
+    }
 
     public boolean contains(State s) { //判断一个NFA状态是否在当前DFA对应的状态集里
         for (State ns : nfa_state) {

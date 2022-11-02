@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //String[] regexes = new String[]{"*ca"};  //错误输入
-        String[] regexes = new String[]{"(a|b)*a"}; //正确输入  "c(a|b|c)*"
+        String[] regexes = new String[]{"(a|b)*ab"}; //正确输入  "c(a|b|c)*"   "(a|b)*a"
         RegexSet aRegexes = new RegexSet(regexes);
         for (Regex r : aRegexes.getRegexes()) {  //将RE转为语法树
             r.compile();

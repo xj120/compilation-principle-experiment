@@ -29,23 +29,30 @@ public class ThompsonConstructor {
             nfa.getTransitTable().addEdge(temp_nfa.getAcceptState(), temp_nfa.getStartState(), new RelationshipEdge('ε'));
             return nfa;
         } else {
-            NFA temp01_nfa = translate(node.getFirstChild());
-            NFA temp02_nfa = translate(node.getFirstChild().getNextSibling());
+            PatternTreeNode n = node.getFirstChild();
+
+            NFA temp01_nfa = translate(n);
             nfa.merge(temp01_nfa);
-            nfa.merge(temp02_nfa);
             temp01_nfa.getAcceptState().setType(StateType.middle);
-            temp02_nfa.getStartState().setType(StateType.middle);
-            if (type == NodeType.CONCATENATION) { //结点类型为连接符
-                nfa.getTransitTable().addEdge(temp01_nfa.getAcceptState(), temp02_nfa.getStartState(), new RelationshipEdge('ε'));
-                nfa.setStartState(temp01_nfa.getStartState());
-                nfa.setAcceptState(temp02_nfa.getAcceptState());
-            } else { //结点类型为Union
-                temp01_nfa.getStartState().setType(StateType.middle);
-                temp02_nfa.getAcceptState().setType(StateType.middle);
-                nfa.getTransitTable().addEdge(nfa.getStartState(), temp01_nfa.getStartState(), new RelationshipEdge('ε'));
-                nfa.getTransitTable().addEdge(nfa.getStartState(), temp02_nfa.getStartState(), new RelationshipEdge('ε'));
-                nfa.getTransitTable().addEdge(temp01_nfa.getAcceptState(), nfa.getAcceptState(), new RelationshipEdge('ε'));
-                nfa.getTransitTable().addEdge(temp02_nfa.getAcceptState(), nfa.getAcceptState(), new RelationshipEdge('ε'));
+            while (n.getNextSibling() != null) {
+                NFA temp02_nfa = translate(n.getNextSibling());
+                n = n.getNextSibling();
+                nfa.merge(temp02_nfa);
+                temp02_nfa.getStartState().setType(StateType.middle);
+                if (type == NodeType.CONCATENATION) { //结点类型为连接符
+                    nfa.getTransitTable().addEdge(temp01_nfa.getAcceptState(), temp02_nfa.getStartState(), new RelationshipEdge('ε'));
+                    nfa.setStartState(temp01_nfa.getStartState());
+                    nfa.setAcceptState(temp02_nfa.getAcceptState());
+                } else { //结点类型为Union
+                    temp01_nfa.getStartState().setType(StateType.middle);
+                    temp02_nfa.getAcceptState().setType(StateType.middle);
+                    nfa.getTransitTable().addEdge(nfa.getStartState(), temp01_nfa.getStartState(), new RelationshipEdge('ε'));
+                    nfa.getTransitTable().addEdge(nfa.getStartState(), temp02_nfa.getStartState(), new RelationshipEdge('ε'));
+                    nfa.getTransitTable().addEdge(temp01_nfa.getAcceptState(), nfa.getAcceptState(), new RelationshipEdge('ε'));
+                    nfa.getTransitTable().addEdge(temp02_nfa.getAcceptState(), nfa.getAcceptState(), new RelationshipEdge('ε'));
+                }
+                temp01_nfa = nfa;
+                temp01_nfa.getAcceptState().setType(StateType.middle);
             }
             return nfa;
         }
