@@ -64,22 +64,14 @@ public class DFA {
         System.out.println("\r");
     }
 
-    public void merge(DFA fa) {
-        for (RelationshipEdge edge : fa.getTransitTable().edgeSet()) {      //将两个FA放在同一图层中，还未连接
-            this.transitTable.addVertex(fa.getTransitTable().getEdgeTarget(edge));
-            this.transitTable.addVertex(fa.getTransitTable().getEdgeSource(edge));
-            this.transitTable.addEdge(fa.getTransitTable().getEdgeSource(edge), fa.getTransitTable().getEdgeTarget(edge), new RelationshipEdge(edge.getLabel()));
-        }
-    }
-
-    public boolean contains(Dstate U) {
+    public boolean contains(Dstate U) { //判断当前DFA是否包含状态U
         for (Dstate ds : D_states) {
             if (ds.equals(U)) {
                 return true;
             }
         }
         return false;
-    } //判断一个DFA状态是否已经在DFA中
+    }
 
     public void showDFATable() { //打印转换表
         System.out.print("NFA states\t\tDFA state");
