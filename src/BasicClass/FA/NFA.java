@@ -19,6 +19,7 @@ public class NFA extends FA {
     }
 
     public void showNFA() {  //打印NFA
+        System.out.println("NFA Information: ");
         System.out.println("Start State:" + this.start.getId());
         System.out.println("Accept State:" + this.accept.getId());
         System.out.println("the transitTable is: \r");
@@ -27,5 +28,6 @@ public class NFA extends FA {
             edgeInfo = "(" + this.transitTable.getEdgeSource(edge).getId() + "---" + edge.getLabel() + "-->" + this.transitTable.getEdgeTarget(edge).getId() + ")\r";
             System.out.println(edgeInfo);
         }
+        System.out.println("\r");
     }
 }

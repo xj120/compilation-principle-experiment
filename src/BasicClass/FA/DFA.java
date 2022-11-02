@@ -3,10 +3,11 @@ package BasicClass.FA;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class DFA {
     private Dstate start; //标记开始状态
-    private Dstate[] accept; //标记接收状态
+    private ArrayList<Dstate> accept; //标记接收状态
     private DirectedPseudograph<Dstate, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class); //转换表
     private ArrayList<Dstate> D_states = new ArrayList<>(); //状态集合
 
@@ -20,14 +21,6 @@ public class DFA {
 
     public void setStart(Dstate start) {
         this.start = start;
-    }
-
-    public Dstate[] getAccept() {
-        return accept;
-    }
-
-    public void setAccept(Dstate[] accept) {
-        this.accept = accept;
     }
 
     public DirectedPseudograph<Dstate, RelationshipEdge> getTransitTable() {
@@ -46,15 +39,29 @@ public class DFA {
         D_states = d_states;
     }
 
-    public void showDFA() {  //打印NFA  TODO
+    public ArrayList<Dstate> getAccept() {
+        return accept;
+    }
+
+    public void setAccept(ArrayList<Dstate> accept) {
+        this.accept = accept;
+    }
+
+    public void showDFA() {  //打印DFA
+        System.out.println("DFA Information: ");
         System.out.println("Start State:" + this.start.getId());
-        //System.out.println("Accept State:" + this.accept.getId());
+        System.out.print("Accept States: ");
+        for (Dstate dstate : this.accept) {
+            System.out.print(dstate.getId() + ", ");
+        }
+        System.out.println(" ");
         System.out.println("the transitTable is: \r");
         String edgeInfo;
         for (RelationshipEdge edge : transitTable.edgeSet()) {
             edgeInfo = "(" + this.transitTable.getEdgeSource(edge).getId() + "---" + edge.getLabel() + "-->" + this.transitTable.getEdgeTarget(edge).getId() + ")\r";
             System.out.println(edgeInfo);
         }
+        System.out.println("\r");
     }
 
     public void merge(DFA fa) {
@@ -73,4 +80,43 @@ public class DFA {
         }
         return false;
     } //判断一个DFA状态是否已经在DFA中
+
+    public void showDFATable() { //打印转换表
+        System.out.print("NFA states\t\t\t\t\t\tDFA state");
+        ArrayList<Character> input = getInputSymbol();
+        for (Character a : input) {
+            System.out.print("\t\t" + a);
+        }
+        System.out.println("\r");
+        Set<Dstate> dsSet = this.transitTable.vertexSet();
+        for (Dstate ds : dsSet) {
+            ArrayList<State> ns = ds.getNfa_state();
+            for (State s : ns) {
+                System.out.print(s.getId() + ",");
+            }
+            System.out.print("\t\t\t\t\t\t?" + ds.getId());
+            Set<RelationshipEdge> edgeSet = this.transitTable.edgesOf(ds);
+            for (Character character : input) {
+                for (RelationshipEdge e : edgeSet) {
+                    if (this.transitTable.getEdgeTarget(e) != ds) {
+                        if (e.getLabel() == character) {
+                            System.out.print("\t\t" + character + this.transitTable.getEdgeTarget(e).getId());
+                        }
+                    }
+                }
+            }
+            System.out.println("\r");
+        }
+    }
+
+    public ArrayList<Character> getInputSymbol() { // 获取输入符号
+        ArrayList<Character> inputSymbol = new ArrayList<>();
+        Set<RelationshipEdge> symbolSet = this.getTransitTable().edgeSet();
+        for (RelationshipEdge ne : symbolSet) {
+            if (!inputSymbol.contains(ne.getLabel())) {
+                inputSymbol.add(ne.getLabel());
+            }
+        }
+        return inputSymbol;
+    }
 }

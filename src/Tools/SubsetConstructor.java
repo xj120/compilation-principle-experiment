@@ -8,6 +8,15 @@ import java.util.Stack;
 
 public class SubsetConstructor {
     public static DFA toDFA(NFA nfa) {
+        ArrayList<Character> inputSymbol = new ArrayList<>();
+        Set<RelationshipEdge> symbolSet = nfa.getTransitTable().edgeSet();
+        for (RelationshipEdge ne : symbolSet) {  // 获取输入符号
+            if (ne.getLabel() != 'ε') {
+                if (!inputSymbol.contains(ne.getLabel())) {
+                    inputSymbol.add(ne.getLabel());
+                }
+            }
+        }
         State.STATE_ID = 0;
         DFA dfa = new DFA();
 
@@ -23,17 +32,32 @@ public class SubsetConstructor {
                 break;
             } else {
                 T.setMark(true);
-                for (each inputSymbol a) {
-                    Dstate U = closure(move(T, a), nfa);
+                dfa.getTransitTable().addVertex(T);
+                for (char a : inputSymbol) {
+                    Dstate U = closure(move(T, a, nfa), nfa);
                     if (!dfa.contains(U)) {
                         dfa.getD_states().add(U);
+                        dfa.getTransitTable().addVertex(U);
+                        dfa.getTransitTable().addEdge(T, U, new RelationshipEdge(a));
+                    } else {
+                        for (Dstate ds: dfa.getD_states()) {
+                            if (ds.equals(U)) {
+                                dfa.getTransitTable().addEdge(T, ds, new RelationshipEdge(a));
+                            }
+                        }
                     }
-                    dfa.getTransitTable().addVertex(T);
-                    dfa.getTransitTable().addVertex(U);
-                    dfa.getTransitTable().addEdge(T, U, a);
                 }
             }
         }
+        //统计接收状态有哪些
+        State acc = nfa.getAcceptState();
+        ArrayList<Dstate> accSet = new ArrayList<>();
+        for (Dstate ds : dfa.getD_states()) {
+            if (ds.getNfa_state().contains(acc)) {
+                accSet.add(ds);
+            }
+        }
+        dfa.setAccept(accSet);
 
         return dfa;
     }
@@ -45,7 +69,6 @@ public class SubsetConstructor {
             stack.push(state);
             result.getNfa_state().add(state);
         }
-
         while (!stack.empty()) {
             State t = stack.pop();
             Set<RelationshipEdge> set = nfa.getTransitTable().edgesOf(t);
@@ -62,8 +85,21 @@ public class SubsetConstructor {
         return result;
     }
 
-    public static ArrayList<State> move(Dstate T, inputSymbol a) {
-
+    public static ArrayList<State> move(Dstate T, char a, NFA nfa) {
+        ArrayList<State> states = new ArrayList<>();
+        ArrayList<State> s = T.getNfa_state();
+        for (State t : s) {
+            Set<RelationshipEdge> set = nfa.getTransitTable().edgesOf(t);
+            for (RelationshipEdge e : set) {
+                if (e.getLabel() == a) {
+                    State u = nfa.getTransitTable().getEdgeTarget(e);
+                    if (!states.contains(u)) {
+                        states.add(u);
+                    }
+                }
+            }
+        }
+        return states;
     }
 
     public static Dstate getUnmarkedIn(ArrayList<Dstate> dstates) {
