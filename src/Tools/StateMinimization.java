@@ -91,6 +91,7 @@ public class StateMinimization {
                         }
                     }
                     newAllStateList.add(otherState);
+                    isAcc = false;
                 }
             }
         }
