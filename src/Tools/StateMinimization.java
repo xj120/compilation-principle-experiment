@@ -50,6 +50,7 @@ public class StateMinimization {
         boolean isAcc = false;
         // 新建一个minDFA 其中每个DFA状态对应原DFA的一个组
         for(Dgroup group : finalPartition){
+            // 分情况，如果是开始状态
             if(group.getdStateSet().contains(dfa.getStart())){
                 Dstate startState = new Dstate();
                 startState.setId(group.getGroupId());
@@ -65,6 +66,7 @@ public class StateMinimization {
             }
             else{
                 for(Dstate accState : accStates){
+                    // 如果是接受状态
                     if(group.getdStateSet().contains(accState)){
                         Dstate acceptState = new Dstate();
                         acceptState.setId(group.getGroupId());
@@ -80,6 +82,7 @@ public class StateMinimization {
                         break;
                     }
                 }
+                // 如果是中间状态
                 if(!isAcc){
                     Dstate otherState = new Dstate();
                     otherState.setId(group.getGroupId());
@@ -178,6 +181,7 @@ public class StateMinimization {
     }
 
 
+    // 找到该Dstate属于的组，返回groupID
     public static int groupDstateBelong(Set<Dgroup> partition, Dstate state){
         for(Dgroup dgroup : partition){
             if(dgroup.getdStateSet().contains(state)){
@@ -188,6 +192,7 @@ public class StateMinimization {
     }
 
 
+    // 根据ID来找到该DFA状态，返回DFA状态
     public static Dstate getDFAStateByID(int id, DFA dfa){
         for(Dstate dstate : dfa.getD_states()){
             if (dstate.getId() == id){
@@ -197,6 +202,8 @@ public class StateMinimization {
         return null;
     }
 
+
+    // 判断是否有重复的边，最小化DFA时防止重复添加边
     public static boolean duplicateEdge(Dstate source, Dstate target, char label,
                                         DirectedPseudograph<Dstate, RelationshipEdge> transitTable){
         Set<RelationshipEdge> edgeSet = transitTable.edgeSet();
@@ -214,6 +221,8 @@ public class StateMinimization {
         return false;
     }
 
+
+    // 打印划分
     public static void printPartition(Set<Dgroup> partition){
         for (Dgroup dgroup : partition) {
             System.out.print(dgroup.getGroupId()+":{");
