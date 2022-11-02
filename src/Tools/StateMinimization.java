@@ -81,6 +81,9 @@ public class StateMinimization {
         minDFA.setAccept(newAccStateList);
         minDFA.setD_states(newAllStateList);
         // 构建DFA转换表
+        for(Dstate dstate : newAllStateList) {
+            newTransitTable.addVertex(dstate);
+        }
         for(int i = 0; i < newAllStateList.size(); i++){
             for (Dstate dstate : newAllStateList) {
                 Set<RelationshipEdge> edgeSet = transitTable.getAllEdges(newAllStateList.get(i), dstate);

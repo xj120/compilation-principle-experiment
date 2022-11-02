@@ -3,6 +3,7 @@ import BasicClass.FA.NFA;
 import BasicClass.Regex.Regex;
 import BasicClass.Regex.RegexSet;
 import Tools.CombineNFA;
+import Tools.StateMinimization;
 import Tools.SubsetConstructor;
 import Tools.ThompsonConstructor;
 
@@ -15,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         //String[] regexes = new String[]{"*ca"};  //错误输入
-        String[] regexes = new String[]{"(a|b)*a"}; //正确输入  "c(a|b|c)*"
+        String[] regexes = new String[]{"(a|b)*abb(a|b)*"}; //正确输入  "c(a|b|c)*"
         RegexSet aRegexes = new RegexSet(regexes);
         for (Regex r : aRegexes.getRegexes()) {  //将RE转为语法树
             r.compile();
@@ -31,5 +32,9 @@ public class Main {
         DFA dfa = SubsetConstructor.toDFA(final_nfa);
         dfa.showDFA();
         dfa.showDFATable();
+
+//        DFA minDFA = StateMinimization.minimizeDFA(dfa);
+//        minDFA.showDFA();
+//        minDFA.showDFATable();
     }
 }
