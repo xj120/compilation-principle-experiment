@@ -33,8 +33,12 @@ public class Main {
         dfa.showDFA();
         dfa.showDFATable();
 
-//        DFA minDFA = StateMinimization.minimizeDFA(dfa);
-//        minDFA.showDFA();
-//        minDFA.showDFATable();
+
+        System.out.println();
+        DFA minDFA = StateMinimization.minimizeDFA(dfa);
+        System.out.println();
+        minDFA.showDFA();
+        System.out.println();
+        minDFA.showDFATable();
     }
 }

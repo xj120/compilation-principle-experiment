@@ -1,9 +1,6 @@
 package Tools;
 
-import BasicClass.FA.DFA;
-import BasicClass.FA.Dgroup;
-import BasicClass.FA.Dstate;
-import BasicClass.FA.RelationshipEdge;
+import BasicClass.FA.*;
 import org.jgrapht.graph.DirectedPseudograph;
 
 import java.util.*;
@@ -36,44 +33,64 @@ public class StateMinimization {
         ArrayList<Character> inputSymbols = dfa.getInputSymbol();
 
         // 遍历所有输入符号，得到真正的最终划分
+        int cnt = 0;
         for(char symbol : inputSymbols){
             curPartition = finalPartition;
             finalPartition = divideGroups(symbol, finalPartition, transitTable);
+            System.out.println("Step"+cnt+": ");
+            printPartition(finalPartition);
+            cnt++;
         }
 
-        // 打印划分
-        for(Dgroup group : finalPartition){
-            Set<Dstate> set = group.getdStateSet();
-            System.out.print(group.getGroupId()+":{");
-            for(Dstate dstate : set){
-                System.out.print(dstate.getId()+" ");
-            }
-            System.out.print("}");
-            System.out.println();
-        }
 
         // 建立最小化的DFA
         DirectedPseudograph<Dstate, RelationshipEdge> newTransitTable = new DirectedPseudograph<>(RelationshipEdge.class);
         ArrayList<Dstate> newAllStateList = new ArrayList<>();
         ArrayList<Dstate> newAccStateList = new ArrayList<>();
         boolean isAcc = false;
-        // 取划分中的每个组中的一个元素作为代表
+        // 新建一个minDFA 其中每个DFA状态对应原DFA的一个组
         for(Dgroup group : finalPartition){
             if(group.getdStateSet().contains(dfa.getStart())){
-                minDFA.setStart(dfa.getStart());
-                newAllStateList.add(minDFA.getStart());
+                Dstate startState = new Dstate();
+                startState.setId(group.getGroupId());
+                minDFA.setStart(startState);
+                for(Dstate state : group.getdStateSet()){
+                    for(State nfaState : state.getNfa_state()){
+                        if(!minDFA.getStart().getNfa_state().contains(nfaState)){
+                            minDFA.getStart().getNfa_state().add(nfaState);
+                        }
+                    }
+                }
+                newAllStateList.add(startState);
             }
             else{
                 for(Dstate accState : accStates){
                     if(group.getdStateSet().contains(accState)){
-                        newAccStateList.add(accState);
-                        newAllStateList.add(accState);
+                        Dstate acceptState = new Dstate();
+                        acceptState.setId(group.getGroupId());
+                        for(State nfaState : accState.getNfa_state()){
+                            if(!acceptState.getNfa_state().contains(nfaState)){
+                                acceptState.getNfa_state().add(nfaState);
+                            }
+                        }
+                        minDFA.getAccept().add(acceptState);
+                        newAccStateList.add(acceptState);
+                        newAllStateList.add(acceptState);
                         isAcc = true;
                         break;
                     }
                 }
                 if(!isAcc){
-                    newAllStateList.add(group.getdStateSet().iterator().next());
+                    Dstate otherState = new Dstate();
+                    otherState.setId(group.getGroupId());
+                    for (Dstate state : group.getdStateSet()){
+                        for (State nfaState : state.getNfa_state()){
+                            if(!otherState.getNfa_state().contains(nfaState)){
+                                otherState.getNfa_state().add(nfaState);
+                            }
+                        }
+                    }
+                    newAllStateList.add(otherState);
                 }
             }
         }
@@ -84,14 +101,14 @@ public class StateMinimization {
         for(Dstate dstate : newAllStateList) {
             newTransitTable.addVertex(dstate);
         }
-        for(int i = 0; i < newAllStateList.size(); i++){
-            for (Dstate dstate : newAllStateList) {
-                Set<RelationshipEdge> edgeSet = transitTable.getAllEdges(newAllStateList.get(i), dstate);
-                if(!edgeSet.isEmpty()){
-                    for (RelationshipEdge edge : edgeSet) {
-                        newTransitTable.addEdge(newAllStateList.get(i), dstate, edge);
-                    }
-                }
+        Set<RelationshipEdge> edgeSet = transitTable.edgeSet();
+        for(RelationshipEdge edge : edgeSet){
+            int targetID = groupDstateBelong(finalPartition, transitTable.getEdgeTarget(edge));
+            int sourceID = groupDstateBelong(finalPartition, transitTable.getEdgeSource(edge));
+            Dstate sourceState = getDFAStateByID(sourceID, minDFA);
+            Dstate targetState = getDFAStateByID(targetID, minDFA);
+            if (!duplicateEdge(sourceState, targetState, edge.getLabel(), newTransitTable)){
+                newTransitTable.addEdge(sourceState, targetState, new RelationshipEdge(edge.getLabel()));
             }
         }
         minDFA.setTransitTable(newTransitTable);
@@ -159,4 +176,56 @@ public class StateMinimization {
         return null;
     }
 
+
+    public static int groupDstateBelong(Set<Dgroup> partition, Dstate state){
+        for(Dgroup dgroup : partition){
+            if(dgroup.getdStateSet().contains(state)){
+                return dgroup.getGroupId();
+            }
+        }
+        return -1;
+    }
+
+
+    public static Dstate getDFAStateByID(int id, DFA dfa){
+        for(Dstate dstate : dfa.getD_states()){
+            if (dstate.getId() == id){
+                return dstate;
+            }
+        }
+        return null;
+    }
+
+    public static boolean duplicateEdge(Dstate source, Dstate target, char label,
+                                        DirectedPseudograph<Dstate, RelationshipEdge> transitTable){
+        Set<RelationshipEdge> edgeSet = transitTable.edgeSet();
+        if (edgeSet.isEmpty())
+            return false;
+        for (RelationshipEdge edge : edgeSet) {
+            Dstate sourceState = transitTable.getEdgeSource(edge);
+            Dstate targetState = transitTable.getEdgeTarget(edge);
+            char slabel = edge.getLabel();
+            if (source.getId() == sourceState.getId() && target.getId() == targetState.getId()
+            && slabel == label){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void printPartition(Set<Dgroup> partition){
+        for (Dgroup dgroup : partition) {
+            System.out.print(dgroup.getGroupId()+":{");
+            Iterator<Dstate> it = dgroup.getdStateSet().iterator();
+            while(it.hasNext()){
+                Dstate state = it.next();
+                System.out.print(state.getId());
+                if (it.hasNext()){
+                    System.out.print(",");
+                }
+            }
+            System.out.print("}");
+            System.out.println();
+        }
+    }
 }

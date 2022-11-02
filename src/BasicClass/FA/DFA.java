@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class DFA {
     private Dstate start; //标记开始状态
-    private ArrayList<Dstate> accept; //标记接收状态
+    private ArrayList<Dstate> accept = new ArrayList<>(); //标记接收状态
     private DirectedPseudograph<Dstate, RelationshipEdge> transitTable = new DirectedPseudograph<>(RelationshipEdge.class); //转换表
     private ArrayList<Dstate> D_states = new ArrayList<>(); //状态集合
 
